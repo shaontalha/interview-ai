@@ -7,54 +7,61 @@ const ai = new GoogleGenAI({
     apiKey: process.env.GOOGLE_GENAI_API_KEY
 })
 
-const interviewReportSchema=z.object({
+const interviewReportSchema = z.object({
     matchScore: z.number()
-    .min(0)
-    .max(100)
-    .description("Overall percentage match score between the candidate profile and the job requirements"),
-    technicalQuestions: z.array(z.object({
-    question: z.string().description("The technical question can be asked in interview"),
+        .min(0)
+        .max(100)
+        .describe("Overall percentage match score between the candidate profile and the job requirements"),
 
-    intention: z.string().description("The intention of interviewer behind asking the question"),
+    technicalQuestions: z.array(
+        z.object({
+            question: z.string()
+                .describe("The technical question that can be asked in the interview"),
 
-    answer: z.string().description("How to answer the question, what points to cover, what approach to take etc.")
-})).description("Technical questions can be asked along with their intention and how to answer them"),
+            intention: z.string()
+                .describe("The intention of the interviewer behind asking the question"),
 
+            answer: z.string()
+                .describe("How to answer the question, what points to cover, and what approach to take")
+        })
+    ).describe("Technical questions along with their intention and suggested answers"),
 
-behavioralQuestions: z.array(z.object({
-    question: z.string().description("The behavioral question can be asked in interview"),
+    behavioralQuestions: z.array(
+        z.object({
+            question: z.string()
+                .describe("The behavioral question that can be asked in the interview"),
 
-    intention: z.string().description("The intention of interviewer behind asking the question"),
+            intention: z.string()
+                .describe("The intention of the interviewer behind asking the question"),
 
-    answer: z.string().description("How to answer the question, what points to cover, what approach to take etc.")
-})).description("Behavioral questions can be asked along with their intention and how to answer them"),
+            answer: z.string()
+                .describe("How to answer the question, what points to cover, and what approach to take")
+        })
+    ).describe("Behavioral questions along with their intention and suggested answers"),
 
+    skillsGaps: z.array(
+        z.object({
+            skill: z.string()
+                .describe("The missing or weak skill identified from the candidate profile"),
 
-skillsGaps: z.array(z.object({
-    skill: z.string().description("The missing or weak skill identified from the candidate profile"),
+            severity: z.enum(["low", "medium", "high"])
+                .describe("Severity level of the skill gap based on job requirements")
+        })
+    ).describe("Skill gaps identified between the candidate profile and job requirements"),
 
-    severity: z.enum(["low", "medium", "high"])
-        .description("Severity level of the skill gap based on job requirements")
+    preparationPlans: z.array(
+        z.object({
+            day: z.number()
+                .describe("The preparation day or timeline label"),
 
-})).description("Skill gaps identified between the candidate profile and job requirements"),
+            focus: z.string()
+                .describe("Main focus area or topic for that day"),
 
-
-preparationPlans: z.array(z.object({
-    day: z.number()
-        .description("The preparation day or timeline label"),
-
-    focus: z.string()
-        .description("Main focus area or topic for that day"),
-
-    tasks: z.array(z.string())
-        .description("List of preparation tasks or activities to complete")
-
-})).description("Structured preparation roadmap with daily focus areas and tasks"),
-
-
-
-
-})
+            tasks: z.array(z.string())
+                .describe("List of preparation tasks or activities to complete")
+        })
+    ).describe("Structured preparation roadmap with daily focus areas and tasks")
+});
 
 async function generateInterviewReport({resume,selfDescription,jobDescription}) {
 
@@ -134,11 +141,11 @@ Important instructions:
         contents:prompt,
         config:{
             responseMimeType:"application/json",
-            schema: zodToJsonSchema(interviewReportSchema)
+            responseSchema: zodToJsonSchema(interviewReportSchema)
         }
     })
 
-    console.log(JSON.parse(response.text))
+    return JSON.parse(response.text)
 
     
 }
