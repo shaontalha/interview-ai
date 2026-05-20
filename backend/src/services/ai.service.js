@@ -60,7 +60,8 @@ const interviewReportSchema = z.object({
             tasks: z.array(z.string())
                 .describe("List of preparation tasks or activities to complete")
         })
-    ).describe("Structured preparation roadmap with daily focus areas and tasks")
+    ).describe("Structured preparation roadmap with daily focus areas and tasks"),
+    title:z.string().describe("The title of the job for which the interview report is generated")
 });
 
 async function generateInterviewReport({resume,selfDescription,jobDescription}) {
