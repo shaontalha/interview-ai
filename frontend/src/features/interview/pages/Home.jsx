@@ -9,6 +9,7 @@ const Home = () => {
         {/* Left Side */}
         <div className="left">
           <div className="input-group">
+            <label htmlFor="jobDescription">Job Description</label>
             <textarea
               name="jobDescription"
               id="jobDescription"
