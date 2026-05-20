@@ -1,0 +1,502 @@
+/* ── Inherits CSS tokens from home.scss :root ───────────────────── */
+
+.interview {
+  display: grid;
+  grid-template-columns: 210px 1fr 240px;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+
+  /* ── Left sidebar ─────────────────────────────────────────────── */
+  &__sidebar {
+    padding: 2rem 1rem;
+    border-right: 1px solid var(--divider);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  &__sidebar-heading {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    padding: 0 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  &__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  &__nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 0.55rem 0.75rem;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 400;
+    cursor: pointer;
+    text-align: left;
+    transition: background var(--t) var(--ease), color var(--t) var(--ease);
+
+    &:hover {
+      background: var(--input-bg);
+      color: var(--text-primary);
+    }
+
+    &--active {
+      background: var(--accent-soft);
+      color: var(--text-primary);
+      font-weight: 600;
+
+      .interview__nav-icon { color: var(--accent); }
+    }
+  }
+
+  &__nav-icon {
+    font-size: 0.8rem;
+    width: 16px;
+    text-align: center;
+    color: var(--text-faint);
+    flex-shrink: 0;
+    font-style: normal;
+  }
+
+  /* ── Main content ─────────────────────────────────────────────── */
+  &__main {
+    padding: 2rem 2.5rem;
+    overflow-y: auto;
+    min-height: 100vh;
+  }
+
+  &__section {
+    animation: fadeUp 0.2s var(--ease) both;
+  }
+
+  &__section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--divider);
+  }
+
+  &__section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  &__section-count {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 999px;
+    padding: 0.15em 0.65em;
+  }
+
+  &__section-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid rgba(236,64,103,0.2);
+    border-radius: 999px;
+    padding: 0.2em 0.7em;
+  }
+
+  &__cards {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  /* ── Roadmap ──────────────────────────────────────────────────── */
+  &__roadmap {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Right sidebar ────────────────────────────────────────────── */
+  &__gaps {
+    padding: 2rem 1.25rem;
+    border-left: 1px solid var(--divider);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* ── Score ring ───────────────────────────────────────────────── */
+  &__score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__score-label {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  &__score-ring {
+    position: relative;
+    width: 96px;
+    height: 96px;
+
+    svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+
+      circle {
+        fill: none;
+        stroke-width: 5;
+        stroke-linecap: round;
+
+        &:first-child { stroke: var(--input-bg); }
+
+        &:last-child {
+          stroke: var(--accent);
+          filter: drop-shadow(0 0 6px rgba(236,64,103,0.5));
+          transition: stroke-dasharray 0.8s cubic-bezier(0.4,0,0.2,1);
+        }
+      }
+    }
+  }
+
+  &__score-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  &__score-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--text-primary);
+  }
+
+  &__score-unit {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    margin-top: 1px;
+  }
+
+  &__score-caption {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    text-align: center;
+    margin: 0;
+  }
+
+  /* ── Skill gaps ───────────────────────────────────────────────── */
+  &__gaps-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  &__gaps-title {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  &__gap-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
+  &__gap-tag {
+    display: inline-block;
+    padding: 0.35em 0.75em;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border: 1px solid;
+    cursor: default;
+
+    &--high {
+      background: rgba(236,64,103,0.1);
+      color: #ec4067;
+      border-color: rgba(236,64,103,0.25);
+    }
+
+    &--medium {
+      background: rgba(245,158,11,0.1);
+      color: #f59e0b;
+      border-color: rgba(245,158,11,0.25);
+    }
+
+    &--low {
+      background: rgba(34,197,130,0.1);
+      color: #22c582;
+      border-color: rgba(34,197,130,0.25);
+    }
+  }
+}
+
+/* ── Question card ──────────────────────────────────────────────── */
+.q-card {
+  border: 1px solid var(--input-border);
+  border-radius: 12px;
+  background: var(--card-bg);
+  overflow: hidden;
+  transition: border-color var(--t) var(--ease);
+
+  &:hover { border-color: rgba(255,255,255,0.11); }
+  &--open { border-color: rgba(236,64,103,0.28); }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 1rem 1.1rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+  }
+
+  &__index {
+    flex-shrink: 0;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid rgba(236,64,103,0.2);
+    border-radius: 5px;
+    padding: 0.2em 0.45em;
+    margin-top: 2px;
+  }
+
+  &__question {
+    flex: 1;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.55;
+    color: var(--text-primary);
+  }
+
+  &__chevron {
+    flex-shrink: 0;
+    font-size: 0.55rem;
+    color: var(--text-faint);
+    padding-top: 4px;
+    transition: color var(--t) var(--ease);
+  }
+
+  &--open &__chevron { color: var(--accent); }
+
+  &__body {
+    padding: 0 1.1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    animation: fadeUp 0.18s var(--ease) both;
+  }
+
+  &__intention,
+  &__answer {
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    border-left: 2px solid;
+
+    p {
+      font-size: 0.82rem;
+      font-weight: 300;
+      line-height: 1.7;
+      margin-top: 0.35rem;
+    }
+  }
+
+  &__intention {
+    background: rgba(59,91,252,0.07);
+    border-left-color: #3b5bfc;
+    p { color: #a0aeff; }
+  }
+
+  &__answer {
+    background: var(--input-bg);
+    border-left-color: var(--accent);
+    p { color: var(--text-secondary); }
+  }
+
+  &__block-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    display: block;
+
+    .q-card__intention & { color: #7b93ff; }
+    .q-card__answer    & { color: var(--accent); }
+  }
+}
+
+/* ── Roadmap card ───────────────────────────────────────────────── */
+.roadmap-card {
+  display: flex;
+  gap: 1.25rem;
+  padding-bottom: 0;
+
+  &__timeline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    padding-top: 4px;
+    width: 14px;
+  }
+
+  &__node {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2.5px solid var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow);
+    flex-shrink: 0;
+    z-index: 1;
+  }
+
+  &__line {
+    flex: 1;
+    width: 1.5px;
+    background: linear-gradient(to bottom, rgba(236,64,103,0.3), rgba(236,64,103,0.05));
+    min-height: 32px;
+    margin-block: 4px;
+  }
+
+  &__content {
+    flex: 1;
+    padding-bottom: 2rem;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 0.65rem;
+  }
+
+  &__day {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid rgba(236,64,103,0.2);
+    border-radius: 5px;
+    padding: 0.2em 0.55em;
+    white-space: nowrap;
+  }
+
+  &__focus {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  &__tasks {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0;
+    margin: 0;
+  }
+
+  &__task {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.82rem;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+
+  &__bullet {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--text-faint);
+    flex-shrink: 0;
+    margin-top: 7px;
+  }
+}
+
+/* ── Animations ─────────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Responsive ─────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .interview {
+    grid-template-columns: 1fr;
+
+    &__sidebar,
+    &__gaps {
+      position: static;
+      height: auto;
+      border: none;
+      border-bottom: 1px solid var(--divider);
+    }
+
+    &__sidebar { padding: 1.25rem 1.5rem; }
+
+    &__nav { flex-direction: row; flex-wrap: wrap; }
+
+    &__gaps {
+      border-top: 1px solid var(--divider);
+      flex-direction: row;
+      flex-wrap: wrap;
+      padding: 1.25rem 1.5rem;
+    }
+
+    &__score { flex-direction: row; gap: 1rem; }
+
+    &__main { padding: 1.5rem; }
+  }
+}
