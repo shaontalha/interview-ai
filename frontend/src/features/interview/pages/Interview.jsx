@@ -1,94 +1,6 @@
 import React, { useState } from "react";
 import "../style/interview.scss";
-
-/**
- * UI LAYER — Interview
- * Pure presentational component. No state logic beyond active nav tab.
- * All data passed via props from useInterviewReport hook.
- * Default prop uses the actual API response shape for standalone rendering.
- */
-
-const SAMPLE_DATA = {
-  matchScore: 85,
-  technicalQuestions: [
-    {
-      question: "How do you handle state management in a large-scale React application, and when would you choose Context API over libraries like Redux?",
-      intention: "To evaluate the candidate's understanding of React hooks and their ability to architect scalable frontend solutions.",
-      answer: "For simple or medium applications, I use React Hooks like useState and useReducer combined with the Context API for global data. If the app has complex state transitions or high-frequency updates, Redux or Zustand might be better to prevent unnecessary re-renders. I prioritize maintainability and performance by keeping state as local as possible.",
-    },
-    {
-      question: "Explain how you implement JWT-based authentication in a Node.js/Express application.",
-      intention: "To check if the candidate understands authentication and authorization, a specific requirement in the job description.",
-      answer: "When a user logs in, the server validates credentials and generates a signed JWT containing user IDs or roles. This token is sent to the client, usually stored in an HttpOnly cookie or local storage. For subsequent requests, a middleware decodes the token from the header to authorize the user before allowing access to protected routes.",
-    },
-    {
-      question: "In MongoDB, how do you handle relationships between data entities? Compare embedding vs. referencing.",
-      intention: "To assess database design skills and knowledge of performance trade-offs.",
-      answer: "Embedding (denormalization) involves nesting documents within each other, which is great for one-to-few relationships and fast read performance. Referencing (normalization) involves storing ObjectIDs and using .populate() or $lookup, which is better for many-to-many relationships or data that changes frequently.",
-    },
-    {
-      question: "How do you optimize a MERN stack application for performance and scalability?",
-      intention: "To see if the candidate can handle the 'optimize applications for speed' responsibility mentioned in the JD.",
-      answer: "On the frontend, I use code-splitting, lazy loading, and memoization (useMemo/memo). On the backend, I implement indexing in MongoDB, use caching (like Redis) for frequent queries, and ensure API responses are paginated. I also use compression middleware in Express and optimize assets with Webpack or Vite.",
-    },
-  ],
-  behavioralQuestions: [
-    {
-      question: "Describe a time you had to implement a feature from a Figma design that was technically challenging. How did you handle it?",
-      intention: "To evaluate the candidate's ability to collaborate with UI/UX designers and their problem-solving skills.",
-      answer: "The candidate should describe a specific UI component, the technical hurdle (e.g., complex animation or responsive constraints), and how they used CSS/React logic to achieve a pixel-perfect result while maintaining performance.",
-    },
-    {
-      question: "Tell me about a situation where you found a critical bug during a code review or development. How did you resolve it?",
-      intention: "To assess attention to detail and ability to work in an agile environment.",
-      answer: "The candidate should explain the bug's impact (e.g., a data leak or a crash), the debugging tools used (Postman, Chrome DevTools), and the collaborative process of fixing and testing the solution.",
-    },
-  ],
-  skillsGaps: [
-    { skill: "TypeScript",                   severity: "medium" },
-    { skill: "Next.js",                      severity: "medium" },
-    { skill: "JWT/Auth Implementation",      severity: "low"    },
-    { skill: "Docker / CI-CD Pipelines",     severity: "low"    },
-  ],
-  preparationPlans: [
-    {
-      day: "Day 1-2",
-      focus: "Authentication & Security",
-      tasks: [
-        "Implement a full login/signup flow using JWT and Bcrypt",
-        "Practice creating custom Express middleware for role-based access control",
-        "Study Refresh Token rotation and secure cookie storage",
-      ],
-    },
-    {
-      day: "Day 3-4",
-      focus: "Advanced React & Performance",
-      tasks: [
-        "Review React.memo, useCallback, and useMemo to explain performance optimization",
-        "Build a small project or component using TypeScript to understand basic typing in React",
-        "Refactor an existing project to use React Query for more efficient API fetching",
-      ],
-    },
-    {
-      day: "Day 5-6",
-      focus: "Database & DevOps Basics",
-      tasks: [
-        "Practice complex MongoDB Aggregation pipelines",
-        "Learn the basics of Docker (creating a Dockerfile for a Node.js app)",
-        "Review GitHub Actions for basic CI/CD pipeline automation",
-      ],
-    },
-    {
-      day: "Day 7",
-      focus: "Mock Interview & Soft Skills",
-      tasks: [
-        "Rehearse 'Tell me about yourself' focusing on MERN projects",
-        "Prepare 3 specific examples of problem-solving from previous roles",
-        "Do a final review of the company's tech stack and products",
-      ],
-    },
-  ],
-};
+import { useInterview } from "../hooks/useInterview";
 
 const NAV_ITEMS = [
   { key: "technical",  label: "Technical Questions", icon: "<>" },
@@ -96,27 +8,30 @@ const NAV_ITEMS = [
   { key: "roadmap",    label: "Road Map",             icon: "↗" },
 ];
 
-const SEVERITY_LABEL = { high: "High", medium: "Medium", low: "Low" };
+const Interview = () => {
+  const { report } = useInterview();
 
-const Interview = ({
-  data = SAMPLE_DATA,
-  activeSection: activeSectionProp,
-  onSectionChange,
-}) => {
-  // local fallback so component works standalone without a parent hook
   const [localSection, setLocalSection] = useState("technical");
-  const activeSection = activeSectionProp ?? localSection;
-  const handleSection = onSectionChange ?? setLocalSection;
+  const activeSection = localSection;
+  const handleSection = setLocalSection;
 
   const {
-    matchScore       = 0,
+    matchScore          = 0,
     technicalQuestions  = [],
     behavioralQuestions = [],
     skillsGaps          = [],
     preparationPlans    = [],
-  } = data;
+  } = report ?? {};
 
-  const scoreCircumference = 2 * Math.PI * 26; // r=26
+  const scoreCircumference = 2 * Math.PI * 26;
+
+  if (!report) {
+    return (
+      <div className="interview interview--empty">
+        <p>No report generated yet. Go back and generate one first.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="interview">
@@ -193,7 +108,6 @@ const Interview = ({
       {/* ── Right sidebar ── */}
       <aside className="interview__gaps">
 
-        {/* Match score */}
         <div className="interview__score">
           <p className="interview__score-label">Match Score</p>
           <div className="interview__score-ring">
@@ -212,7 +126,6 @@ const Interview = ({
           <p className="interview__score-caption">Strong match for this role</p>
         </div>
 
-        {/* Skill gaps */}
         <div className="interview__gaps-block">
           <p className="interview__gaps-title">Skill Gaps</p>
           <div className="interview__gap-list">
@@ -233,7 +146,7 @@ const Interview = ({
   );
 };
 
-/* ── QuestionCard ───────────────────────────────────────────────── */
+/* ── QuestionCard ── */
 const QuestionCard = ({ index, question, intention, answer }) => {
   const [open, setOpen] = useState(false);
   return (
@@ -261,7 +174,7 @@ const QuestionCard = ({ index, question, intention, answer }) => {
   );
 };
 
-/* ── RoadmapCard ────────────────────────────────────────────────── */
+/* ── RoadmapCard ── */
 const RoadmapCard = ({ plan, index, total }) => (
   <div className="roadmap-card">
     <div className="roadmap-card__timeline">
