@@ -7,7 +7,8 @@ async function generateInterviewReportController(req, res) {
         const resumeContent = await pdfParse(req.file.buffer)
         const resumeText = resumeContent.text
 
-        const { selfDescription, jobDescription } = req.body  // ✅ defined here first
+        const { selfDescription, jobDescription } = req.body
+        const title = jobDescription.split('\n')[0].replace(/[^a-zA-Z0-9\s,.\-&]/g, '').trim().substring(0, 60) || "Interview Report"
 
         const interviewReportByAi = await generateInterviewReport({
             resume: resumeText,
@@ -17,6 +18,7 @@ async function generateInterviewReportController(req, res) {
 
         const interviewReport = await interviewReportModel.create({
             user: req.user.id,
+            title,              // ✅ add this
             resume: resumeText,
             selfDescription,
             jobDescription,
@@ -58,7 +60,7 @@ async function getAllInterviewReportsController(req, res) {
         const interviewReports = await interviewReportModel
             .find({ user: req.user.id })
             .sort({ createdAt: -1 })
-            .select("-resume -selfDescription -jobDescription -__v -technicalQuestions -behavioralQuestions -skillsGaps -preparationPlans")
+            .select("-resume -selfDescription -__v -technicalQuestions -behavioralQuestions -skillsGaps -preparationPlans")
 
         res.status(200).json({
             message: "Interview Report fetched Successfully",

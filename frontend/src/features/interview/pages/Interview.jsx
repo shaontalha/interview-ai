@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "../style/interview.scss";
 import { useInterview } from "../hooks/useInterview";
+import { useParams } from "react-router";
 
 const NAV_ITEMS = [
   { key: "technical",  label: "Technical Questions", icon: "<>" },
@@ -9,7 +10,8 @@ const NAV_ITEMS = [
 ];
 
 const Interview = () => {
-  const { report } = useInterview();
+  const { interviewId } = useParams()
+  const { report, loading } = useInterview(interviewId)  // ✅ pass interviewId here
 
   const [localSection, setLocalSection] = useState("technical");
   const activeSection = localSection;
@@ -25,10 +27,18 @@ const Interview = () => {
 
   const scoreCircumference = 2 * Math.PI * 26;
 
+  if (loading) {
+    return (
+      <div className="interview interview--empty">
+        <p>Loading your report...</p>
+      </div>
+    );
+  }
+
   if (!report) {
     return (
       <div className="interview interview--empty">
-        <p>No report generated yet. Go back and generate one first.</p>
+        <p>No report found. Go back and generate one first.</p>
       </div>
     );
   }
@@ -36,7 +46,6 @@ const Interview = () => {
   return (
     <div className="interview">
 
-      {/* ── Left sidebar ── */}
       <aside className="interview__sidebar">
         <p className="interview__sidebar-heading">Sections</p>
         <nav className="interview__nav">
@@ -53,7 +62,6 @@ const Interview = () => {
         </nav>
       </aside>
 
-      {/* ── Center main ── */}
       <main className="interview__main">
 
         {activeSection === "technical" && (
@@ -105,7 +113,6 @@ const Interview = () => {
 
       </main>
 
-      {/* ── Right sidebar ── */}
       <aside className="interview__gaps">
 
         <div className="interview__score">

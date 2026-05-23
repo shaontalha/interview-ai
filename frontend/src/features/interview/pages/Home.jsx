@@ -2,9 +2,13 @@ import React, { useRef, useState } from "react";
 import "../style/home.scss";
 import { useInterview } from "../hooks/useInterview";
 import { useNavigate } from "react-router";
+import { useEffect } from "react";
 
 const Home = () => {
-  const { loading, generateReport } = useInterview();
+  const { loading, generateReport,reports, getReports } = useInterview();
+  useEffect(() => {
+  getReports()
+}, [])
   const navigate = useNavigate();
 
   const [jobDescription, setJobDescription] = useState("");
@@ -169,6 +173,39 @@ const Home = () => {
         </div>
 
       </div>
+
+      {reports && reports.length > 0 && (
+  <div className="recent-reports">
+    <div className="recent-reports__header">
+      <h2 className="recent-reports__title">Recent Reports</h2>
+      <span className="recent-reports__count">{reports.length} total</span>
+    </div>
+    <div className="recent-reports__grid">
+      {reports.map((r) => (
+        <button
+          key={r._id}
+          className="report-card"
+          onClick={() => navigate(`/interview/${r._id}`)}
+        >
+          <div className="report-card__top">
+            <p className="report-card__title">
+              {r.title || r.jobDescription?.split('\n')[0].trim().substring(0, 60) || "Interview Report"}
+            </p>
+            <span className={`report-card__score report-card__score--${r.matchScore >= 70 ? "high" : r.matchScore >= 40 ? "mid" : "low"}`}>
+              {r.matchScore}%
+            </span>
+          </div>
+          <div className="report-card__bottom">
+            <span className="report-card__date">
+              {new Date(r.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+            </span>
+            <span className="report-card__arrow">→</span>
+          </div>
+        </button>
+      ))}
+    </div>
+  </div>
+)}
     </main>
   );
 };
