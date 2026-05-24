@@ -1,6 +1,7 @@
 const { GoogleGenAI } = require("@google/genai");
 const {z} = require('zod')
 const {zodToJsonSchema}= require('zod-to-json-schema')
+const puppeteer=require("puppeteer")
 
 
 const ai = new GoogleGenAI({
@@ -151,4 +152,83 @@ Important instructions:
     
 }
 
-module.exports = generateInterviewReport
+async function generatePdfFromHtml(html) {
+    const browser = await puppeteer.launch({
+        headless: true
+    });
+
+    const page = await browser.newPage();
+
+    await page.setContent(html, {
+        waitUntil: "networkidle0"
+    });
+
+    const pdfBuffer = await page.pdf({
+        format: "A4",
+        printBackground: true
+    });
+
+    await browser.close();
+
+    return pdfBuffer;
+}
+
+async function generateResumePdf({ resume, selfDescription, jobDescription }) {
+    const resumePdfSchema = z.object({
+        html: z
+            .string()
+            .describe(
+                "The complete HTML content of the resume that can be converted into a PDF using Puppeteer"
+            )
+    })
+
+    const prompt = `
+You are an expert resume writer and HTML resume designer.
+
+Generate a professional ATS-friendly resume in clean HTML format using the following information.
+
+CANDIDATE RESUME DATA:
+${resume}
+
+SELF DESCRIPTION:
+${selfDescription}
+
+TARGET JOB DESCRIPTION:
+${jobDescription}
+
+Requirements:
+- Return ONLY a valid JSON object.
+- The JSON object must contain a single field named "html".
+- The "html" field must contain a complete HTML document.
+- Use semantic HTML structure.
+- Make the resume visually professional and modern.
+- Keep the layout ATS-friendly and printer-friendly.
+- Use inline CSS only.
+- Avoid external libraries, scripts, CDN links, or images.
+- Ensure the HTML works properly with Puppeteer PDF generation.
+- Include sections only if relevant information exists.
+- Highlight skills and experience relevant to the target job description.
+- Keep formatting clean and readable.
+- Use proper spacing, typography, and section hierarchy.
+- Do not include markdown, explanations, or extra text outside the JSON response.
+
+Expected response format:
+{
+  "html": "<!DOCTYPE html>..."
+}
+`
+const response = await ai.models.generateContent({
+    model: "gemini-3-flash-preview",
+    contents: prompt,
+    config: {
+        responseMimeType: "application/json",
+        schema: zodToJsonSchema(resumePdfSchema)
+    }
+})
+const jsonContent= JSON.parse(response.text)
+const pdfBuffer=await generatePdfFromHtml(jsonContent.html)
+return pdfBuffer
+}
+
+
+module.exports = {generateInterviewReport,generateResumePdf}

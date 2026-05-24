@@ -1,11 +1,14 @@
 import {
   generateInterviewReport,
   getAllInterviewReports,
-  getInterviewReportById
+  getInterviewReportById,
+  generateResumePdf
 } from '../services/interview.api'
 
 import { useContext, useEffect } from 'react'
 import { InterviewContext } from '../interview.context'
+
+
 
 export const useInterview = (interviewId) => {
 
@@ -74,12 +77,34 @@ export const useInterview = (interviewId) => {
         }
     }
 
+    const getResumePdf = async (interviewId) => {  // ✅ fixed name + param
+    setLoading(true)
+    try {
+        const blob = await generateResumePdf(interviewId)  // ✅ pass interviewId
+        const url = window.URL.createObjectURL(new Blob([blob], { type: "application/pdf" }))  // ✅ fixed syntax
+        const link = document.createElement("a")
+        link.href = url
+        link.setAttribute("download", `resume_${interviewId}.pdf`)
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)  // ✅ cleanup
+        window.URL.revokeObjectURL(url)  // ✅ cleanup
+    } catch (error) {
+        console.error("getResumePdf error:", error)
+    } finally {
+        setLoading(false)
+    }
+}
+
+
+
     return {
         loading,
         report,
         reports,
         generateReport,
         getReportById,
-        getReports
+        getReports,
+        getResumePdf
     }
 }

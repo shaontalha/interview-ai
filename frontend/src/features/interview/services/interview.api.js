@@ -29,3 +29,12 @@ export const getAllInterviewReports = async () => {
     const response = await api.get(`/api/interview`)  // ✅ removed stray }
     return response.data
 }
+
+export const generateResumePdf = async (interviewReportId) => {
+    const response = await api.post(
+        `/api/interview/resume/pdf/${interviewReportId}`,
+        {},
+        { responseType: 'blob' }  
+    )
+    return response.data
+}

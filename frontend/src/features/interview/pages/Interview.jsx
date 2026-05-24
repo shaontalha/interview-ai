@@ -11,7 +11,7 @@ const NAV_ITEMS = [
 
 const Interview = () => {
   const { interviewId } = useParams()
-  const { report, loading } = useInterview(interviewId)  // ✅ pass interviewId here
+  const { report, loading,getResumePdf } = useInterview(interviewId)
 
   const [localSection, setLocalSection] = useState("technical");
   const activeSection = localSection;
@@ -27,10 +27,17 @@ const Interview = () => {
 
   const scoreCircumference = 2 * Math.PI * 26;
 
+  const handleDownload = () => {
+    window.print()
+  }
+
   if (loading) {
     return (
       <div className="interview interview--empty">
-        <p>Loading your report...</p>
+        <div className="interview__loading">
+          <div className="interview__loading-spinner" />
+          <p>Loading your report...</p>
+        </div>
       </div>
     );
   }
@@ -46,22 +53,34 @@ const Interview = () => {
   return (
     <div className="interview">
 
+      {/* ── Left sidebar ── */}
       <aside className="interview__sidebar">
-        <p className="interview__sidebar-heading">Sections</p>
-        <nav className="interview__nav">
-          {NAV_ITEMS.map(({ key, label, icon }) => (
-            <button
-              key={key}
-              className={`interview__nav-item${activeSection === key ? " interview__nav-item--active" : ""}`}
-              onClick={() => handleSection(key)}
-            >
-              <span className="interview__nav-icon">{icon}</span>
-              {label}
-            </button>
-          ))}
-        </nav>
+        <div className="interview__sidebar-top">
+          <p className="interview__sidebar-heading">Sections</p>
+          <nav className="interview__nav">
+            {NAV_ITEMS.map(({ key, label, icon }) => (
+              <button
+                key={key}
+                className={`interview__nav-item${activeSection === key ? " interview__nav-item--active" : ""}`}
+                onClick={() => handleSection(key)}
+              >
+                <span className="interview__nav-icon">{icon}</span>
+                {label}
+              </button>
+            ))}
+          </nav>
+        </div>
+
+        {/* ── Download button ── */}
+        <div className="interview__sidebar-footer">
+          <button className="interview__download-btn" onClick={()=>{getResumePdf(interviewId)}}>
+            <span className="interview__download-icon">↓</span>
+            Download Resume
+          </button>
+        </div>
       </aside>
 
+      {/* ── Center main ── */}
       <main className="interview__main">
 
         {activeSection === "technical" && (
@@ -113,6 +132,7 @@ const Interview = () => {
 
       </main>
 
+      {/* ── Right sidebar ── */}
       <aside className="interview__gaps">
 
         <div className="interview__score">
@@ -130,7 +150,13 @@ const Interview = () => {
               <span className="interview__score-unit">%</span>
             </div>
           </div>
-          <p className="interview__score-caption">Strong match for this role</p>
+          <p className="interview__score-caption">
+            {matchScore >= 70
+              ? "Strong match for this role"
+              : matchScore >= 40
+              ? "Moderate match for this role"
+              : "Keep preparing for this role"}
+          </p>
         </div>
 
         <div className="interview__gaps-block">
