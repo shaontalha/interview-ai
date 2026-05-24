@@ -55,31 +55,21 @@ export const useAuth=()=>{
 }
 
     const handleLogout = async () => {
-
     setLoading(true)
-
     try {
-
         await logout()
-
         setUser(null)
-
         return true
-
     } catch (err) {
-
         console.error(err)
-
         return false
-
     } finally {
-
-        setLoading(false)
+        setLoading(false)  // ✅ sets loading false
     }
 }
 
 useEffect(() => {
-
+    
     const getAndSetUser = async () => {
 
         try {

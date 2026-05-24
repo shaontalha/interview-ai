@@ -39,15 +39,23 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+.navbar-wrapper {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 9999;
+  background: var(--bg);
+}
+
 /* ── Page ────────────────────────────────────────────────────────── */
 .home {
   width: 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  padding: 3rem 1.5rem;
+  padding: 1.5rem;
   gap: 2.25rem;
   position: relative;
   overflow: hidden;

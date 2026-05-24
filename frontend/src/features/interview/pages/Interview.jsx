@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "../style/interview.scss";
 import { useInterview } from "../hooks/useInterview";
 import { useParams } from "react-router";
+import Navbar from "../../../components/Navbar";
 
 const NAV_ITEMS = [
   { key: "technical",  label: "Technical Questions", icon: "<>" },
@@ -51,7 +52,10 @@ const Interview = () => {
   }
 
   return (
+    <>
+    <Navbar />
     <div className="interview">
+      
 
       {/* ── Left sidebar ── */}
       <aside className="interview__sidebar">
@@ -176,6 +180,10 @@ const Interview = () => {
       </aside>
 
     </div>
+
+    </>
+    
+    
   );
 };
 
