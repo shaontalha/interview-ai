@@ -37,7 +37,7 @@
 
 ## Overview
 
-**Interview AI** is a full-stack SaaS application that leverages Google Gemini Flash to generate personalized interview preparation reports. A candidate uploads their resume (PDF), provides a self-description, and pastes a job description — the AI analyzes the match and returns:
+**Interview AI** is a full-stack SaaS application that leverages Gemini 3 Flash Preview to generate personalized interview preparation reports. A candidate uploads their resume (PDF), provides a self-description, and pastes a job description — the AI analyzes the match and returns:
 
 - A **match score** between the candidate's profile and the job requirements
 - **Technical & behavioral interview questions** with suggested answers and interviewer intent
@@ -51,7 +51,7 @@
 
 | Feature | Description |
 |---|---|
-| 🤖 AI Interview Report | Gemini Flash analyzes resume vs job description and generates a full prep report |
+| 🤖 AI Interview Report | Gemini 3 Flash Preview analyzes resume vs job description and generates a full prep report |
 | 📄 PDF Resume Upload | Extracts text from uploaded PDF resumes using `pdf-parse` |
 | 📝 AI Resume Generator | Generates an ATS-friendly HTML resume rendered to PDF via Puppeteer |
 | 🔐 JWT Authentication | Secure cookie-based auth with token blacklisting on logout |
@@ -74,7 +74,7 @@
 ### Backend
 - **Node.js + Express** REST API
 - **MongoDB + Mongoose** for data persistence
-- **Google Gemini Flash** via `@google/genai` SDK
+- **Google Gemini 3 Flash Preview** via `@google/genai` SDK
 - **Zod + zod-to-json-schema** for structured AI output
 - **pdf-parse** for PDF text extraction
 - **Puppeteer Core + @sparticuz/chromium** for serverless PDF generation
