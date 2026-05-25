@@ -1,7 +1,7 @@
 const { GoogleGenAI } = require("@google/genai");
 const {z} = require('zod')
 const {zodToJsonSchema}= require('zod-to-json-schema')
-const puppeteer=require("puppeteer")
+
 
 
 const ai = new GoogleGenAI({
@@ -153,24 +153,24 @@ Important instructions:
 }
 
 async function generatePdfFromHtml(html) {
-    const browser = await puppeteer.launch({
-        headless: true
-    });
+    const chromium = await import('@sparticuz/chromium')  // ✅ dynamic import
+    const puppeteer = await import('puppeteer-core')       // ✅ dynamic import
 
-    const page = await browser.newPage();
+    const browser = await puppeteer.default.launch({
+        args: chromium.default.args,
+        defaultViewport: chromium.default.defaultViewport,
+        executablePath: await chromium.default.executablePath(),
+        headless: chromium.default.headless,
+    })
 
-    await page.setContent(html, {
-        waitUntil: "networkidle0"
-    });
-
+    const page = await browser.newPage()
+    await page.setContent(html, { waitUntil: "networkidle0" })
     const pdfBuffer = await page.pdf({
         format: "A4",
         printBackground: true
-    });
-
-    await browser.close();
-
-    return pdfBuffer;
+    })
+    await browser.close()
+    return pdfBuffer
 }
 
 async function generateResumePdf({ resume, selfDescription, jobDescription }) {

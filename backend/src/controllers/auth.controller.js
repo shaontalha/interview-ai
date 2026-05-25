@@ -5,9 +5,10 @@ const tokenBlacklistModel = require("../models/blacklist.model")
 
 const cookieOptions = {
     httpOnly: true,
-    sameSite: "lax",    // ✅ lax works better for localhost
-    secure: false,       // ✅ false for localhost http
-    maxAge: 24 * 60 * 60 * 1000
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",  // ✅ "none" required for cross-origin
+    secure: process.env.NODE_ENV === "production" ? true : false,       // ✅ "none" requires secure:true
+    maxAge: 24 * 60 * 60 * 1000,
+    path: "/"
 }
 
 async function registerUserController(req, res) {
@@ -65,12 +66,7 @@ async function logoutUserController(req, res) {
     if (token) {
         await tokenBlacklistModel.create({ token })
     }
-     res.clearCookie("token", {
-        httpOnly: true,
-        sameSite: "lax",
-        secure: false,
-        path: "/"
-    })
+    res.clearCookie("token", cookieOptions)  // ✅ same options as when set
     res.status(200).json({ message: "User Logged Out Successfully" })
 }
 
