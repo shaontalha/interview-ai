@@ -10,7 +10,7 @@
 [![React](https://img.shields.io/badge/React-19.x-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://mongodb.com)
 
-**Upload your resume. Paste a job description. Get a tailored interview strategy powered by Google Gemini AI — in under 30 seconds.**
+**Upload your resume, describe yourself, and paste a job description — get a tailored interview strategy, skill gap analysis, preparation roadmap, and an AI-generated ATS-optimized resume, all powered by Google Gemini AI.**
 
 [🚀 Try it Live](https://interview-ai-zeta-silk.vercel.app/) · [📡 API](https://interview-ai-backend-navy.vercel.app) · [🐛 Report Bug](https://github.com/shaontalha/interview-ai/issues)
 
