@@ -1,13 +1,10 @@
-import 'dotenv/config';
-import app from './src/app.js';
-import connectToDB from './src/config/database.js';
-import invokeGeminiAi from './src/services/ai.service.js';
-
+require('dotenv').config();
+const app = require('./src/app.js');
+const connectToDB = require('./src/config/database.js');
 
 const PORT = process.env.PORT || 5000;
 
-connectToDB()
-
+connectToDB();
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
