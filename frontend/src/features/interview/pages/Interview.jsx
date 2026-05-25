@@ -37,7 +37,7 @@ const Interview = () => {
       <div className="interview interview--empty">
         <div className="interview__loading">
           <div className="interview__loading-spinner" />
-          <p>Loading your report...</p>
+          <p>Loading your resume...</p>
         </div>
       </div>
     );
