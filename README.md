@@ -200,6 +200,10 @@ MONGO_URI=your_mongodb_atlas_connection_string
 JWT_SECRET=your_jwt_secret_key
 GOOGLE_GENAI_API_KEY=your_gemini_api_key
 NODE_ENV=development
+# Optional: comma-separated allowed frontend origins (defaults to the live site + http://localhost:5173)
+CLIENT_URL=http://localhost:5173
+# Optional: override the Gemini model
+GEMINI_MODEL=gemini-3-flash-preview
 ```
 
 ### Frontend `.env`
