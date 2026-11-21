@@ -16,6 +16,7 @@ const Home = () => {
   const [jobDescription, setJobDescription] = useState("");
   const [selfDescription, setSelfDescription] = useState("");
   const [resumeFile, setResumeFile] = useState(null);
+  const [error, setError] = useState("");
 
   const resumeInputRef = useRef();
 
@@ -36,20 +37,33 @@ const Home = () => {
 
     const file = e.dataTransfer.files[0];
 
-    if (file) setResumeFile(file);
+    if (file && file.type === "application/pdf") setResumeFile(file);
+    else if (file) setError("Only PDF resumes are supported.");
   };
 
   const onGenerate = async () => {
-    const resume = resumeInputRef.current.files[0];
+    setError("");
+
+    if (!jobDescription.trim()) {
+      return setError("Please paste a job description.");
+    }
+    if (!resumeFile && !selfDescription.trim()) {
+      return setError("Upload a resume or write a quick self-description.");
+    }
+    if (resumeFile && resumeFile.size > 3 * 1024 * 1024) {
+      return setError("Resume is too large (max 3MB).");
+    }
 
     const data = await generateReport({
       jobDescription,
       selfDescription,
-      resume,
+      resume: resumeFile,
     });
 
     if (data?._id) {
       navigate(`/interview/${data._id}`);
+    } else {
+      setError("Couldn't generate the report. Please try again.");
     }
   };
 
@@ -181,7 +195,7 @@ const Home = () => {
 
                 {!resumeFile && (
                   <span className="file-label__hint">
-                    PDF or DOCX (Max 5MB)
+                    PDF only (Max 3MB)
                   </span>
                 )}
               </label>
@@ -191,7 +205,7 @@ const Home = () => {
                 type="file"
                 id="resume"
                 name="resume"
-                accept=".pdf,.docx"
+                accept=".pdf,application/pdf"
                 onChange={onResumeChange}
                 ref={resumeInputRef}
               />
@@ -234,6 +248,12 @@ const Home = () => {
             <span className="card-footer__meta">
               AI-Powered Strategy Generation • Approx 30s
             </span>
+
+            {error && (
+              <span role="alert" style={{ color: "#ec4067", fontSize: "0.85rem" }}>
+                {error}
+              </span>
+            )}
 
             <button
               className="generate-btn button primary-button"

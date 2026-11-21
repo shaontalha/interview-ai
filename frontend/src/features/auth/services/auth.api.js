@@ -1,9 +1,4 @@
-import axios from "axios";
-
-const api = axios.create({
-    baseURL: "https://interview-ai-backend-navy.vercel.app",
-    withCredentials: true
-})
+import { api } from "../../../lib/api"
 
 export async function register({ username, email, password }) {
     try {

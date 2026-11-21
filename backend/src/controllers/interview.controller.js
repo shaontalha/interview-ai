@@ -4,10 +4,19 @@ const pdfParse = require('pdf-parse')
 
 async function generateInterviewReportController(req, res) {
     try {
-        const resumeContent = await pdfParse(req.file.buffer)
-        const resumeText = resumeContent.text
+        const { selfDescription = "", jobDescription } = req.body
 
-        const { selfDescription, jobDescription } = req.body
+        if (!jobDescription || !jobDescription.trim()) {
+            return res.status(400).json({ message: "Job description is required" })
+        }
+        if (!req.file && !selfDescription.trim()) {
+            return res.status(400).json({ message: "Provide a resume (PDF) or a self description" })
+        }
+        if (req.file && req.file.mimetype !== "application/pdf") {
+            return res.status(400).json({ message: "Resume must be a PDF file" })
+        }
+
+        const resumeText = req.file ? (await pdfParse(req.file.buffer)).text : ""
         const title = jobDescription.split('\n')[0].replace(/[^a-zA-Z0-9\s,.\-&]/g, '').trim().substring(0, 60) || "Interview Report"
 
         const interviewReportByAi = await generateInterviewReport({
@@ -76,7 +85,12 @@ async function generateResumePdfController(req, res) {
 
     const { interviewReportId } = req.params;
 
-    const interviewReport = await interviewReportModel.findById(interviewReportId);
+    try {
+    // scope to the logged-in user so one user can't download another's resume
+    const interviewReport = await interviewReportModel.findOne({
+        _id: interviewReportId,
+        user: req.user.id
+    });
 
     if (!interviewReport) {
         return res.status(404).json({
@@ -98,6 +112,10 @@ async function generateResumePdfController(req, res) {
     });
 
     return res.send(pdfBuffer);
+    } catch (error) {
+        console.error("generateResumePdfController error:", error)
+        res.status(500).json({ error: error.message })
+    }
 }
 
 module.exports = {
