@@ -23,6 +23,10 @@ async function registerUserController(req, res) {
         return res.status(400).json({ message: "Account already exists with this email or username" })
     }
 
+    if (String(password).length < 6) {
+        return res.status(400).json({ message: "Password must be at least 6 characters" })
+    }
+
     const hash = await bcrypt.hash(password, 10)
     const user = await userModel.create({ username, email, password: hash })
 
@@ -41,6 +45,10 @@ async function registerUserController(req, res) {
 
 async function loginUserController(req, res) {
     const { email, password } = req.body
+
+    if (!email || !password) {
+        return res.status(400).json({ message: "Please provide email and password" })
+    }
 
     const user = await userModel.findOne({ email })
     if (!user) return res.status(400).json({ message: "Invalid Email or Password" })
@@ -72,6 +80,7 @@ async function logoutUserController(req, res) {
 
 async function getMeController(req, res) {
     const user = await userModel.findById(req.user.id)
+    if (!user) return res.status(401).json({ message: "User no longer exists" })
     res.status(200).json({
         message: "User details fetched successfully",
         user: { id: user._id, username: user.username, email: user.email }

@@ -1,15 +1,10 @@
-import axios from "axios";
-
-const api = axios.create({
-    baseURL: 'https://interview-ai-backend-navy.vercel.app',
-    withCredentials: true
-})
+import { api } from "../../../lib/api"
 
 export const generateInterviewReport = async ({ jobDescription, selfDescription, resume }) => {
     const formData = new FormData()  // ✅ capital F
     formData.append("jobDescription", jobDescription)
     formData.append("selfDescription", selfDescription)
-    formData.append("resume", resume)
+    if (resume) formData.append("resume", resume)
 
     const response = await api.post("/api/interview", formData, {
         headers: {

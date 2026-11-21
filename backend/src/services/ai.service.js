@@ -1,12 +1,19 @@
 const { GoogleGenAI } = require("@google/genai");
 const {z} = require('zod')
-const {zodToJsonSchema}= require('zod-to-json-schema')
 
 
 
 const ai = new GoogleGenAI({
     apiKey: process.env.GOOGLE_GENAI_API_KEY
 })
+
+const MODEL = process.env.GEMINI_MODEL || "gemini-3-flash-preview"
+
+// zod v4 ships its own converter; zod-to-json-schema returns an empty schema for zod v4
+const toJsonSchema = (schema) => {
+    const { $schema, ...rest } = z.toJSONSchema(schema)
+    return rest
+}
 
 const interviewReportSchema = z.object({
     matchScore: z.number()
@@ -52,8 +59,8 @@ const interviewReportSchema = z.object({
 
     preparationPlans: z.array(
         z.object({
-            day: z.number()
-                .describe("The preparation day or timeline label"),
+            day: z.string()
+                .describe("The preparation day or timeline label, e.g. 'Day 1'"),
 
             focus: z.string()
                 .describe("Main focus area or topic for that day"),
@@ -139,11 +146,11 @@ Important instructions:
 `;
 
     const response = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
+    model: MODEL,
     contents: prompt,
     config: {
         responseMimeType: "application/json",
-        schema: zodToJsonSchema(interviewReportSchema)
+        responseJsonSchema: toJsonSchema(interviewReportSchema)
     }
 })
 
@@ -163,20 +170,17 @@ async function generatePdfFromHtml(html) {
         headless: chromium.default.headless,
     })
 
-    const page = await browser.newPage()
-    await page.setContent(html, { waitUntil: "networkidle0" })
-    const pdfBuffer = await page.pdf({
-        format: "A4",
-        printBackground: true,
-        margin: {           
-            top: "20mm",
-            bottom: "20mm",
-            left: "20mm",
-            right: "20mm"
-        }
-    })
-    await browser.close()
-    return pdfBuffer
+    try {
+        const page = await browser.newPage()
+        await page.setContent(html, { waitUntil: "networkidle0" })
+        return await page.pdf({
+            format: "A4",
+            printBackground: true,
+            margin: { top: "20mm", bottom: "20mm", left: "20mm", right: "20mm" }
+        })
+    } finally {
+        await browser.close()
+    }
 }
 
 async function generateResumePdf({ resume, selfDescription, jobDescription }) {
@@ -224,11 +228,11 @@ Expected response format:
 }
 `
 const response = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
+    model: MODEL,
     contents: prompt,
     config: {
         responseMimeType: "application/json",
-        schema: zodToJsonSchema(resumePdfSchema)
+        responseJsonSchema: toJsonSchema(resumePdfSchema)
     }
 })
 const jsonContent= JSON.parse(response.text)
