@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 import Navbar from "../../../components/Navbar";
 
 const Home = () => {
-  const { loading, generateReport, reports, getReports } = useInterview();
+  const { generating, generateReport, reports, getReports } = useInterview();
 
   useEffect(() => {
     getReports();
@@ -77,7 +77,7 @@ const Home = () => {
       <main className="home">
 
         {/* ── Loading overlay ── */}
-        {loading && (
+        {generating && (
           <div className="home__loading-overlay">
             <div className="home__loading-card">
               <div className="home__loading-spinner" />
@@ -258,15 +258,15 @@ const Home = () => {
             <button
               className="generate-btn button primary-button"
               onClick={onGenerate}
-              disabled={loading}
+              disabled={generating}
             >
-              {loading ? (
+              {generating ? (
                 <span className="generate-btn__spinner" />
               ) : (
                 <span className="generate-btn__star">★</span>
               )}
 
-              {loading
+              {generating
                 ? "Generating..."
                 : "Generate My Interview Strategy"}
             </button>
