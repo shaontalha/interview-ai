@@ -21,6 +21,8 @@ export const useInterview = (interviewId) => {
     const {
         loading,
         setLoading,
+        generating,
+        setGenerating,
         report,
         setReport,
         reports,
@@ -32,7 +34,7 @@ export const useInterview = (interviewId) => {
     }, [interviewId])
 
     const generateReport = async ({ jobDescription, selfDescription, resume }) => {
-        setLoading(true)
+        setGenerating(true)
         try {
             const response = await generateInterviewReport({
                 jobDescription,
@@ -45,7 +47,7 @@ export const useInterview = (interviewId) => {
             console.error("generateReport error:", error)
             return null
         } finally {
-            setLoading(false)
+            setGenerating(false)
         }
     }
 
@@ -100,6 +102,7 @@ export const useInterview = (interviewId) => {
 
     return {
         loading,
+        generating,
         report,
         reports,
         generateReport,
